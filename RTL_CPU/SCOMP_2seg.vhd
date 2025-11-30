@@ -5,33 +5,34 @@ library altera_mf;
 use altera_mf.altera_mf_components.all;
 
 entity scomp_2seg IS
-  port( clk, reset 				        : in std_logic;
-        i_IO                          : in std_logic_vector(3 downto 0);
-        o_IO                          : out std_logic_vector(7 downto 0);
-        program_counter_out 		     : out std_logic_vector(7 downto 0);
-        register_AC_out 			     : out std_logic_vector(15 downto 0);
-		  memory_data_bus_out	        : out std_logic_vector(15 downto 0);
-		  memory_address_bus_out	     : out std_logic_vector(7 downto 0)
-		   );
+  port( clk, reset 				  : in std_logic;
+        i_IO                      : in std_logic_vector(3 downto 0);
+        o_IO                      : out std_logic_vector(7 downto 0);
+        program_counter_out 	  : out std_logic_vector(7 downto 0);
+        register_AC_out 		  : out std_logic_vector(15 downto 0);
+		memory_data_bus_out	      : out std_logic_vector(15 downto 0);
+		memory_address_bus_out	  : out std_logic_vector(7 downto 0)
+		);
   end scomp_2seg;
   
 architecture arch OF scomp_2seg IS
 type state_type is ( reset_pc, fetch, decode, execute_add, execute_load, execute_store, 
-		                 execute_store2, execute_jump, execute_jneg, execute_subt, execute_xor,
-		                 execute_or, execute_and, execute_jpos, execute_jzero, execute_shl, execute_shr,
-		                 execute_IOin, execute_IOout );
-signal state_reg, state_next                       : state_type;
-signal IR_reg, IR_next                             : unsigned(15 downto 0); 
-signal memory_data_bus 	                           : std_logic_vector(15 downto 0);
-signal ACC_reg, ACC_next 				               : unsigned(15 downto 0);
-signal Output_reg												: std_logic_vector(7 downto 0); --Std logic to map to sevSeg switches
-signal Output_next                     				: unsigned(7 downto 0);
-signal pc_reg, pc_next 			                     : unsigned(7 downto 0);
-signal memory_address_bus	                        : unsigned(7 downto 0);
-signal memory_write 			                        : std_logic;
-signal addrAmount                                  : natural;	
-signal w_sevSegDisp											: std_logic_vector(7 downto 0); --Std logic to map to sevSeg output and drive IO output pins										
-signal shiftZeroVector                             : unsigned(15 downto 0) := (others=>'0');
+		        	 execute_store2, execute_jump, execute_jneg, execute_subt, execute_xor,
+		        	 execute_or, execute_and, execute_jpos, execute_jzero, execute_shl, execute_shr,
+		        	 execute_IOin, execute_IOout );
+	
+signal state_reg, state_next    : state_type;
+signal IR_reg, IR_next          : unsigned(15 downto 0); 
+signal memory_data_bus 	        : std_logic_vector(15 downto 0);
+signal ACC_reg, ACC_next 		: unsigned(15 downto 0);
+signal Output_reg				: std_logic_vector(7 downto 0); --Std logic to map to sevSeg switches
+signal Output_next              : unsigned(7 downto 0);
+signal pc_reg, pc_next 			: unsigned(7 downto 0);
+signal memory_address_bus	    : unsigned(7 downto 0);
+signal memory_write 			: std_logic;
+signal addrAmount               : natural;	
+signal w_sevSegDisp				: std_logic_vector(7 downto 0); --Std logic to map to sevSeg output and drive IO output pins										
+signal shiftZeroVector          : unsigned(15 downto 0) := (others=>'0');
 
 component sevSeg
   port (i_switches: in  std_logic_vector (3 downto 0);
@@ -53,7 +54,7 @@ begin
 		              lpm_type => "altsyncram",
 		              outdata_reg_a => "UNREGISTERED",
 			            -- Reads in mif file for initial program and data values
-		              init_file => "program4.mif",
+		              init_file => "program2.mif",
 		              intended_device_family => "Cyclone")
 		
 	   port map (	wren_a => memory_write, clock0 => clk, 
@@ -65,9 +66,9 @@ begin
     process(clk, reset)
     begin
 		--Clk '0' for running on the board w/ active-low buttons. '1' for simulation
-      if (reset='0') then
+      if (reset='1') then
         state_reg <= reset_pc;
-      elsif (clk'event and clk='0') then
+      elsif (clk'event and clk='1') then
         state_reg <= state_next;
         IR_reg <= IR_next;
         ACC_reg <= ACC_next;
@@ -96,7 +97,7 @@ begin
           memory_address_bus <= (others=>'0');
           IR_next <= (others=>'0');
           memory_write <= '0';
-			 Output_next <= (others=>'0');
+		  Output_next <= (others=>'0');
           state_next <= fetch;
         --Fetch state: data bus on IR, current PC on add. bus, PC increments
         when fetch =>
@@ -131,14 +132,14 @@ begin
               state_next <= execute_jpos;
             when "00001010" =>
               state_next <= execute_jzero;
-          	 when "00001011" =>
-          	   state_next <= execute_shl;
-        	   when "00001100" =>
-        	     state_next <= execute_shr;
-      	     when "00001101" =>
-      	       state_next <= execute_IOin;
-    	       when "00001110" =>
-    	         state_next <= execute_IOout;
+          	when "00001011" =>
+          	  state_next <= execute_shl;
+        	when "00001100" =>
+        	  state_next <= execute_shr;
+      	    when "00001101" =>
+      	      state_next <= execute_IOin;
+    	    when "00001110" =>
+    	      state_next <= execute_IOout;
             when others =>
               state_next <= fetch;
             end case;
@@ -224,7 +225,7 @@ begin
           memory_address_bus <= pc_reg;
 			 --Quartus does not allow variable vector lengths in synthesis. 
 			 --Must explicitly define vector lengths for each case of addrAmount.
-			 --There's probably a more elegant way to accomplish this, but I just want it to work
+			 --There's probably a more elegant way to accomplish this
           --ACC_next <= ACC_reg(15-addrAmount downto 0) & shiftZeroVector(addrAmount - 1 downto 0);
 			 case addrAmount is
 				when 0 =>

@@ -1,0 +1,30 @@
+DEPTH = 256;	% Memory depth and width are required	%
+WIDTH = 16;		% Enter a decimal number	%
+
+ADDRESS_RADIX = HEX;	% Address and value radixes are optional	%
+DATA_RADIX = HEX;	% Enter BIN, DEC, HEX, or OCT; unless 	%
+			% otherwise specified, radixes = HEX	%
+
+% This program tests the shl, shr, and IO in/out instructions %
+-- Specify values for addresses, which can be single address or range
+CONTENT
+	BEGIN
+[00..FF]	:	0000;	% Range--Every address from 00 to FF = 0000 (Default)	%
+	00		:	02F7;	% LOAD AC with MEM(F7){G} %
+	01		:	0B01; 	% SHL AC 1 bit (should be FFFE) %
+	02		:	02F7;	% LOAD AC with MEM(F7){G} %
+	03		:	0C01;	% SHR AC 1 bit (should be 7FFF) %
+	04		:	0DFE;	% Store i_IO switch pins in FE %
+	05		:	0EFE;	% Load i_IO switch pin values to output register (driving o_IO sev seg) %
+	06		:	0306;	% JUMP to 06 (loop forever) %
+	F0		:	1111;	% Data Value of B %
+	F1		:	2222;	% Data Value of C %
+	F2		:	4444;	% Data Value of D %
+	F3		:	0000;   % Stored answer of B OR C%
+	F4		:	0010;	% Data Value of E %
+	F5		:	0011;	% Data Value of F %
+	F6		:	0000; 	% Stored answer of E XOR F %
+	F7		:	FFFF;	% Data Value of G %
+	FE		:	0000;	% IO address %
+END ;	
+

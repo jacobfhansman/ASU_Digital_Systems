@@ -1,0 +1,32 @@
+DEPTH = 256;	% Memory depth and width are required	%
+WIDTH = 16;		% Enter a decimal number	%
+
+ADDRESS_RADIX = HEX;	% Address and value radixes are optional	%
+DATA_RADIX = HEX;	% Enter BIN, DEC, HEX, or OCT; unless 	%
+			% otherwise specified, radixes = HEX	%
+
+% This program tests the Load, Add, Store, Subt, Jump if Negative, and Jump instructions %
+-- Specify values for addresses, which can be single address or range
+CONTENT
+	BEGIN
+[00..FF]	:	0000;	% Range--Every address from 00 to FF = 0000 (Default)	%
+	00		:	02F0;	% LOAD AC with MEM(F0){B} %
+	01		:	00F1;	% ADD MEM(F1){C} to AC %
+	02		:	00F2;	% ADD MEM(F2){D} to AC %
+	03		:	01F3;	% STORE	AC in MEM(F3) %
+	04		:	02F0;	% LOAD AC with MEM(F0){B} 1111 %
+	05		:	02F3;	% LOAD AC with MEM(F3) answer of B+C+D %
+	06		:	02F4;	% LOAD AC with MEM(F4){E} %
+	07		:	05F5;	% SUBT MEM(F5){F} from AC %
+	08		:	01F6;	% STORE AC in MEM(F6) %
+	09		:	0409;	% JUMP to 09 if AC Negative (loop forever) %
+	0A		:	030A;	% JUMP to 10 (loop forever) %
+	F0		:	1111;	% Data Value of B %
+	F1		:	2222;	% Data Value of C %
+	F2		:	4444;	% Data Value of D %
+	F3		:	0000;   % Stored answer of B+C+D%
+	F4		:	0010;	% Data Value of E %
+	F5		:	0011;	% Data Value of F %
+	F6		:	0000; 	% Stored answer of E-F %
+END ;	
+

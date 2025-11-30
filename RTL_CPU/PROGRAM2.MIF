@@ -1,0 +1,34 @@
+DEPTH = 256;	% Memory depth and width are required	%
+WIDTH = 16;		% Enter a decimal number	%
+
+ADDRESS_RADIX = HEX;	% Address and value radixes are optional	%
+DATA_RADIX = HEX;	% Enter BIN, DEC, HEX, or OCT; unless 	%
+			% otherwise specified, radixes = HEX	%
+
+% This program tests the XOR, OR, AND, JPOS, and JZERO instructions %
+-- Specify values for addresses, which can be single address or range
+CONTENT
+	BEGIN
+[00..FF]	:	0000;	% Range--Every address from 00 to FF = 0000 (Default)	%
+	00		:	02F0;	% LOAD AC with MEM(F0){B} %
+	01		:	07F1;	% OR MEM(F1){C} with AC (should produce 3333) %
+	02		:	01F3;	% STORE AC in MEM(F3) %
+	03		:	02F4;	% LOAD AC with MEM(F4){E} %
+	04		:	06F5;	% XOR MEM(F5) with AC (should produce 0001) %
+	05		:	01F3;	% STORE AC in MEM(F6) %
+	06		:	02F4;	% LOAD AC with MEM(F4){E} %
+	07		:	00F5;	% ADD MEM(F5){F} to AC %
+	08		:	090A;	% JUMP to 0A if AC positive %
+	09		:	0309;	% JUMP to 09 (loop forever) %
+	0A		:	02F4;	% LOAD AC with MEM(F4){E} %
+	0B		:	05F4;	% SUBT MEM(F4) from AC (should produce 0000) %
+	0C		:	0A09;	% JUMP back to 09 if AC is zero %
+	F0		:	1111;	% Data Value of B %
+	F1		:	2222;	% Data Value of C %
+	F2		:	4444;	% Data Value of D %
+	F3		:	0000;   % Stored answer of B OR C%
+	F4		:	0010;	% Data Value of E %
+	F5		:	0011;	% Data Value of F %
+	F6		:	0000; 	% Stored answer of E XOR F %
+END ;	
+

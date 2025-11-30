@@ -1,0 +1,22 @@
+DEPTH = 256;	% Memory depth and width are required	%
+WIDTH = 16;		% Enter a decimal number	%
+
+ADDRESS_RADIX = HEX;	% Address and value radixes are optional	%
+DATA_RADIX = HEX;	% Enter BIN, DEC, HEX, or OCT; unless 	%
+			% otherwise specified, radixes = HEX	%
+
+% This program tests only the IO in/out instructions %
+-- Specify values for addresses, which can be single address or range
+CONTENT
+	BEGIN
+[00..FF]	:	0000;	% Range--Every address from 00 to FF = 0000 (Default)	%
+	01		:	0DFE;	% Store i_IO switch pins in FE %
+	02		:	0EFE;	% Load i_IO switch pin values to output register (driving o_IO sev seg) %
+	03		:	0301;	% JUMP to 01 (loop IO forever) %
+	F0		:	1111;	% Data Value of B %
+	F1		:	2222;	% Data Value of C %
+	F2		:	4444;	% Data Value of D %
+	F7		:	FFFF;	% Data Value of G %
+	FE		:	0000;	% IO address %
+END ;	
+

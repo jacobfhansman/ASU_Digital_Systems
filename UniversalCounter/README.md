@@ -1,1 +1,1 @@
-A universal counter
+A universal counter and testbench for modeling
